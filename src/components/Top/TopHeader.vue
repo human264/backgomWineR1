@@ -6,17 +6,23 @@
       :ellipsis="false"
       @select="handleSelect">
     <el-menu-item index="0">
-    <WineProfile></WineProfile>
+      <WineProfile></WineProfile>
     </el-menu-item>
 
-    <div class="flex-grow"/>
+    <div class="flex-grow"></div>
+    <!-- 여기서 el-badge를 el-menu-item 바깥으로 옮기고, 스타일을 조정합니다 -->
     <el-badge :value="12" class="item">
-    <el-menu-item index="1">공지사항</el-menu-item>
+      <el-menu-item index="1">공지사항</el-menu-item>
     </el-badge>
-    <el-menu-item index="2">모임알림</el-menu-item>
-    <el-menu-item index="3">Shopping 알림</el-menu-item>
-    <el-menu-item index="4">Event 알림</el-menu-item>
-
+    <el-badge :value="12" class="item">
+      <el-menu-item index="2">모임알림</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
+      <el-menu-item index="3">Shopping 알림</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
+      <el-menu-item index="4">Event 알림</el-menu-item>
+    </el-badge>
 
   </el-menu>
 </template>
@@ -48,12 +54,9 @@ export class WineHeader {
 }
 
 .item {
-  margin-top: 10px;
-  margin-right: 40px;
+  margin-top: 0; /* 필요에 따라 조정 */
+  /* 마진 값 조정 */
 }
 
-.el-dropdown {
-  margin-top: 1.1rem;
-}
-
+/* 추가적으로 필요한 스타일이 있으면 여기에 추가 */
 </style>
