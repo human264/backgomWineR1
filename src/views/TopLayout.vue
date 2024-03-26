@@ -9,7 +9,7 @@
           <top-aside></top-aside>
         </el-aside>
         <el-main>
-          <wine-community-layout></wine-community-layout>
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import wineHeader from "@/components/Top/TopHeader.vue"
 import TopAside from "@/components/Top/TopAside.vue";
-import WineCommunityLayout from "@/views/WineCommunityLayout.vue";
+
 
 
 </script>
