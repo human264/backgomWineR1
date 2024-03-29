@@ -30,5 +30,5 @@
 }
 </style>
 <script setup lang="ts">
-import CommunityPlanCard from "@/components/WineCommunity/CommunityPlanCard.vue";
+import CommunityPlanCard from "@/components/WineCommunity/main/CommunityPlanCard.vue";
 </script>

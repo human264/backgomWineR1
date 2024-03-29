@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">;
-import CommunityMain from "@/components/WineCommunity/CommunityMain.vue";
-import CommunityPictureHeader from "@/components/WineCommunity/CommunityPictureHeader.vue";
+import CommunityMain from "@/components/WineCommunity/main/CommunityMain.vue";
+import CommunityPictureHeader from "@/components/WineCommunity/main/CommunityPictureHeader.vue";
 
 </script>
 

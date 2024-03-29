@@ -5,15 +5,14 @@
         <CommunityHeader></CommunityHeader>
       </el-header>
       <el-main>
-        <CommunityPictureHeaderCombine></CommunityPictureHeaderCombine>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import CommunityHeader from "@/components/WineCommunity/CommunityHeader.vue";
-import CommunityPictureHeaderCombine from "@/components/WineCommunity/CommunityPictureHeaderCombine.vue";
+import CommunityHeader from "@/components/WineCommunity/main/CommunityHeader.vue";
 
 </script>
 
