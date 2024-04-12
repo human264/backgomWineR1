@@ -10,7 +10,7 @@
       <!-- 답글 목록 -->
       <div v-for="comment in comments" :key="comment.id">
         <el-card>
-          <p>{{ comment.content }}</p>
+          <p>{{ comment.winePoint }}</p>
           <el-button icon="el-icon-thumb" @click="toggleLikeComment(comment)">{{ comment.likes }}</el-button>
         </el-card>
       </div>
@@ -29,7 +29,7 @@ export default defineComponent({
       content: 'This is a sample post with some details.',
     });
     const comments = ref([
-      { id: 1, content: 'This is a comment.', likes: 0 },
+      { id: 1, winePoint: 'This is a comment.', likes: 0 },
       // 추가 답글...
     ]);
     const newComment = ref('');
@@ -39,7 +39,7 @@ export default defineComponent({
     const addComment = () => {
       comments.value.push({
         id: comments.value.length + 1,
-        content: newComment.value,
+        winePoint: newComment.value,
         likes: 0,
       });
       newComment.value = '';

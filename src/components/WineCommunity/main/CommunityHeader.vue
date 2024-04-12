@@ -9,25 +9,36 @@
     <el-menu-item index="0">
 
 
-adsf    </el-menu-item>
+    </el-menu-item>
 
-    <div class="flex-grow" />
+    <div class="flex-grow"/>
     <el-menu-item index="home">홈</el-menu-item>
+    <el-badge :value="12" class="item">
     <el-menu-item index="board">게시판</el-menu-item>
-    <el-menu-item index="3">모임</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
+    <el-menu-item index="meeting">모임</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
     <el-menu-item index="picture">사진첩</el-menu-item>
-    <el-menu-item index="5">후기</el-menu-item>
-    <el-menu-item index="6">채팅</el-menu-item>
-    <el-menu-item index="7">Event 참석</el-menu-item>
-    <el-menu-item index="8">Event 정보</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
+    <el-menu-item index="wineAfter">후기</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
+    <el-menu-item index="wineChat">채팅</el-menu-item>
+    </el-badge>
+    <el-badge :value="12" class="item">
+      <el-menu-item index="event">Event</el-menu-item>
+    </el-badge>
 
   </el-menu>
 </template>
 
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
+import {ref, defineComponent} from 'vue';
+import {useRouter} from 'vue-router';
 
 export default defineComponent({
   setup() {
@@ -41,7 +52,7 @@ export default defineComponent({
       router.push(path);
     };
 
-    return { activeIndex, handleSelect };
+    return {activeIndex, handleSelect};
   },
 });
 </script>

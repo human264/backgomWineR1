@@ -6,11 +6,11 @@
       :ellipsis="false"
       @select="handleSelect">
     <el-menu-item index="0">
-      <WineProfile></WineProfile>
+      <WineProfile @click="toLogIn"></WineProfile>
     </el-menu-item>
 
     <div class="flex-grow"></div>
-    <!-- 여기서 el-badge를 el-menu-item 바깥으로 옮기고, 스타일을 조정합니다 -->
+    <!-- el-badge를 el-menu-item 바깥으로 옮기고, 스타일을 조정합니다 -->
     <el-badge :value="12" class="item">
       <el-menu-item index="1">공지사항</el-menu-item>
     </el-badge>
@@ -27,27 +27,30 @@
   </el-menu>
 </template>
 
-
 <script lang="ts">
-
-import {ref} from 'vue'
-import {defineComponent} from "vue";
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import WineProfile from "@/components/Top/WineProfile.vue";
 
 export default defineComponent({
-  components: {WineProfile}
-})
+  components: { WineProfile },
+  setup() {
+    const router = useRouter();
+    const activeIndex = ref('1');
 
+    const toLogIn = () => {
+      router.push({ name: 'LogIn' });
+    };
 
-const activeIndex = ref('1')
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+    const handleSelect = (key: string, keyPath: string[]) => {
+      console.log(key, keyPath);
+    };
 
-export class WineHeader {
-}
+    // 모든 정의한 변수와 함수를 반환합니다.
+    return { activeIndex, toLogIn, handleSelect };
+  },
+});
 </script>
-
 <style>
 .flex-grow {
   flex-grow: 1;
