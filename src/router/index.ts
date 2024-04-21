@@ -4,7 +4,7 @@ import WineCommunityLayout from "@/views/subViews/WineCommunityLayout.vue";
 import MyMeetingFindLayout from "@/views/subViews/MyMeetingFindLayout.vue";
 import CommunityPictureHeaderCombine from "@/components/WineCommunity/main/CommunityPictureHeaderCombine.vue";
 import BoardList from "@/components/WineCommunity/board/BoardList.vue";
-import CommunityPicture from "@/components/WineCommunity/picture/Picture.vue";
+
 import MeetingList from "@/components/WineCommunity/meeting/MeetingList.vue";
 import CommunityWineAfter from "@/components/WineCommunity/wineAfter/CommunityWineAfter.vue";
 import CommunityWineChatting from "@/components/WineCommunity/chatting/CommunityWineChatting.vue";
@@ -13,6 +13,7 @@ import LogIn from "@/components/LogIn/LogIn.vue";
 import SignIn from "@/components/LogIn/SignIn.vue";
 import PasswordRecovery from "@/components/LogIn/PasswordRecovery.vue";
 import {useLogInStore} from "@/stores/logInStore.ts";
+import CommunityPicture from "@/components/WineCommunity/picture/CommunityPicture.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {

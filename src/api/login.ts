@@ -2,7 +2,7 @@ import axios from "axios";
 import {LoginResponse, LogInUserDto} from "@/api/dto/LogInUserDto";
 
 const apiClient = axios.create({
-    baseURL: "http://192.168.0.10:8080/api",
+    baseURL: "http://localhost:8081/api",
     headers: {
         'Content-Type': 'application/json',
     },

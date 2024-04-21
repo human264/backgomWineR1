@@ -3,7 +3,7 @@
     <el-col :span="12">
       <div class="demo-basic--circle">
         <div class="block">
-          <el-avatar :size="50" :src="circleUrl"/>
+          <el-avatar :size="50" :src="userStore.userImage"/>
         </div>
       </div>
     </el-col>
@@ -11,24 +11,33 @@
 
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, toRefs } from 'vue';
+import {onMounted, reactive, ref, watch} from 'vue';
 import { fetchUserImage } from '@/api/login';  // 이미지를 가져오는 API 함수를 임포트합니다.
+import {useLogInStore} from '@/stores/logInStore';
 
-const state = reactive({
-  circleUrl: '',  // 초기 URL을 비워두고 API 호출을 통해 업데이트합니다.
-  squareUrl: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
-  sizeList: ['small', '', 'large'] as const,
-});
+const userStore = useLogInStore();
+// const state = reactive({
+//   circleUrl: '',  // 초기 URL을 비워두고 API 호출을 통해 업데이트합니다.
+//   squareUrl: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
+//   sizeList: ['small', '', 'large'] as const,
+// });
 
-const { circleUrl, squareUrl, sizeList } = toRefs(state);
+
+watch(() => userStore.userImage, (newImage) => {
+  userStore.userImage = newImage;  // 상태 업데이트
+}, { immediate: true });
 
 onMounted(async () => {
-  try {
-    state.circleUrl = await fetchUserImage();  // 이미지 URL을 불러와서 상태를 업데이트합니다.
-  } catch (error) {
-    console.error('Error fetching the user image:', error);
+  if (!userStore.userImage) {
+    try {
+      userStore.setUserImage(await fetchUserImage());
+        // 이미지 URL을 불러와서 상태를 업데이트합니다.
+    } catch (error) {
+      console.error('Error fetching the user image:', error);
+    }
   }
 });
+
 
 
 
