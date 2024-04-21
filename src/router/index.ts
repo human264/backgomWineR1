@@ -12,6 +12,7 @@ import CommunityEvents from "@/components/WineCommunity/event/CommunityEvents.vu
 import LogIn from "@/components/LogIn/LogIn.vue";
 import SignIn from "@/components/LogIn/SignIn.vue";
 import PasswordRecovery from "@/components/LogIn/PasswordRecovery.vue";
+import {useLogInStore} from "@/stores/logInStore.ts";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -19,7 +20,6 @@ const routes: Array<RouteRecordRaw> = [
         name: 'LogIn',
         component: LogIn,
     },
-
     {
         path: '/SignIn',
         name: 'SignIn',
@@ -30,28 +30,31 @@ const routes: Array<RouteRecordRaw> = [
         path: '/PasswordRecovery',
         name: 'PasswordRecovery',
         component: PasswordRecovery,
+        meta: { requiresAuth: true },
     },
-
-
     {
         path: '/',
         name: 'Home',
         component: FeedLayout,
+        meta: { requiresAuth: true }
     },
     {
         path: '/Feed',
         name: 'FeedLayout',
         component: FeedLayout,
+        meta: { requiresAuth: true },
     },
     {
         path: '/WineCommunity',
         name: 'WineCommunity',
         component: MyMeetingFindLayout,
+        meta: { requiresAuth: true }
     },
     {
         path: '/WineCommunity/:communityName',
         name: 'WineCommunityWithName',
         component: WineCommunityLayout,
+        meta: { requiresAuth: true },
         redirect: (to: RouteLocationNormalized) => {
             return `/WineCommunity/${to.params.communityName}/home`; // 여기서는 백틱과 ${}를 올바르게 사용합니다.
         },
@@ -91,7 +94,6 @@ const routes: Array<RouteRecordRaw> = [
                 name: 'CommunityEvents', // 고유한 이름
                 component: CommunityEvents, // 각각의 컴포넌트로 대체되어야 합니다.
             }
-
         ],
     },
 ];
@@ -101,4 +103,19 @@ const router = createRouter({
     routes,
 });
 
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+    const store = useLogInStore();
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!store.isLogIn) {
+            // 로그인 상태가 아니면 로그인 페이지로 리다이렉트하기 전에 현재 경로 저장
+            localStorage.setItem('redirectPath', to.fullPath);
+            next({ name: 'LogIn' });
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
 export default router;

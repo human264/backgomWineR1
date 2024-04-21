@@ -11,17 +11,38 @@
 
 </template>
 <script lang="ts" setup>
-import {reactive, toRefs} from 'vue'
+import { onMounted, reactive, toRefs } from 'vue';
+import { fetchUserImage } from '@/api/login';  // 이미지를 가져오는 API 함수를 임포트합니다.
 
 const state = reactive({
-  circleUrl:
-      'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-  squareUrl:
-      'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
+  circleUrl: '',  // 초기 URL을 비워두고 API 호출을 통해 업데이트합니다.
+  squareUrl: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
   sizeList: ['small', '', 'large'] as const,
-})
+});
 
-const {circleUrl, squareUrl, sizeList} = toRefs(state)
+const { circleUrl, squareUrl, sizeList } = toRefs(state);
+
+onMounted(async () => {
+  try {
+    state.circleUrl = await fetchUserImage();  // 이미지 URL을 불러와서 상태를 업데이트합니다.
+  } catch (error) {
+    console.error('Error fetching the user image:', error);
+  }
+});
+
+
+
+// import {reactive, toRefs} from 'vue'
+//
+// const state = reactive({
+//   circleUrl:
+//       'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+//   squareUrl:
+//       'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
+//   sizeList: ['small', '', 'large'] as const,
+// })
+//
+// const {circleUrl, squareUrl, sizeList} = toRefs(state)
 </script>
 
 
