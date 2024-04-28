@@ -16,8 +16,6 @@
             </el-menu-item-group>
           </el-sub-menu>
 
-
-
           <el-sub-menu index="2">
             <template #title>
               <!-- #title 슬롯에 스타일을 직접 적용합니다 -->
@@ -26,14 +24,14 @@
               </span>
             </template>
             <el-menu-item-group>
-              <el-menu-item @click="navigateToWineCommunity">내 모임</el-menu-item>
-              <el-menu-item index="2-2">모임 만들기</el-menu-item>
-              <el-menu-item index="2-3">정모 일정</el-menu-item>
-              <el-menu-item index="2-4">친구 초대</el-menu-item>
-              <el-menu-item index="2-5">신규 모임</el-menu-item>
+              <el-menu-item index="2-1" @click="centerDialogVisibleFun">모임 가입</el-menu-item>
+              <el-menu-item index="2-2" @click="navigateToWineCommunity">내 모임</el-menu-item>
+              <el-menu-item index="2-3">모임 만들기</el-menu-item>
+              <el-menu-item index="2-4">정모 일정</el-menu-item>
+              <el-menu-item index="2-5">친구 초대</el-menu-item>
+              <el-menu-item index="2-6">신규 모임</el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
-
 
           <el-sub-menu index="3">
             <template #title>
@@ -141,15 +139,61 @@
       </el-scrollbar>
     </el-aside>
   </div>
+
+
+  <el-dialog
+      v-model="centerDialogVisible"
+      title="Notice"
+      width="500"
+      destroy-on-close
+      center
+  >
+    <span>
+      Notice: before dialog gets opened for the first time this node and the one
+      bellow will not be rendered
+    </span>
+    <div>
+      <strong>Extra content (Not rendered)</strong>
+    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="centerDialogVisible = false">
+          Confirm
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+
+
+
+
+
+
+
 </template>
 
 <script setup lang="ts">
 
 import { useRouter } from 'vue-router';
 import {Message, Setting} from "@element-plus/icons-vue";
-
+import {ref} from "vue";
+import apiClient from "@/api/login.ts";
+import { useLogInStore } from '@/stores/logInStore.ts';
 
   const router = useRouter();
+
+  const logInStore = useLogInStore();
+
+  const centerDialogVisible = ref(false);
+
+  const centerDialogVisibleFun = () => {
+    if(logInStore.isLogIn == true) {
+      console.log("로그???")
+      centerDialogVisible.value = true;
+    }
+  }
 
   const navigateToWineCommunity = () => {
     router.push({ name: 'WineCommunity' });

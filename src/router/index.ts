@@ -107,6 +107,7 @@ const router = createRouter({
 // Global navigation guard
 router.beforeEach((to, from, next) => {
     const store = useLogInStore();
+    console.log(from)
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (!store.isLogIn) {
             // 로그인 상태가 아니면 로그인 페이지로 리다이렉트하기 전에 현재 경로 저장

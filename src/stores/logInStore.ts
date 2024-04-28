@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {UserLogInData} from "@/api/dto/LogInUserDto";
+import {UserLogInData} from "@/types/LogInUserDto.ts";
 
 
 export const useLogInStore = defineStore('logInStore', {
@@ -13,6 +13,12 @@ export const useLogInStore = defineStore('logInStore', {
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
             this.isLogIn = !!accessToken && !!refreshToken;
+        },
+
+        updateLogOutState() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            this.userImage = "";
         },
 
         setUserData(userData: UserLogInData) {

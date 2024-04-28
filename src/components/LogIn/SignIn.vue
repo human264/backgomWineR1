@@ -1,138 +1,236 @@
 <template>
   <div class="signup-container">
-    <el-form ref="form" :model="form" label-width="100px">
+    <el-form v-model="form" label-width="auto" style="max-width: 600px">
       <el-form-item label="이메일 주소:" required>
         <el-input v-model="form.email" type="email"></el-input>
       </el-form-item>
+
       <el-form-item label="비밀번호:" required>
         <el-input v-model="form.password" type="password"></el-input>
       </el-form-item>
 
-      <el-form-item label="비번 확인:" required>
-        <el-input v-model="form.password" type="password"></el-input>
+      <el-form-item label="비번 확인:" required :error="passwordError">
+        <el-input v-model="passwordConfirm" type="password"></el-input>
       </el-form-item>
+
       <el-form-item label="핸드폰 번호:" required>
-        <el-input v-model="form.phone" type="tel"></el-input>
+        <el-input v-model="form.phoneNumber" type="tel"></el-input>
       </el-form-item>
+
       <el-form-item label="사진 업로드:">
         <el-upload
-            class="upload-demo"
+            v-model:file-list="fileList"
+            list-type="picture-card" :auto-upload="false">
+          <el-icon>
+            <Plus/>
+          </el-icon>
 
-        :accept="imageTypes"
-        :on-preview="handlePictureCardPreview"
-            style="margin: 5px"
-        :on-remove="handleRemove"
-        list-type="picture-card"
-        v-model="form.photo">
-        <i class="el-icon-plus"></i>
+          <template #file="{ file }">
+            <div>
+              <img class="el-upload-list__item-thumbnail" :src="file.url" alt=""/>
+              <span class="el-upload-list__item-actions">
+          <span
+              class="el-upload-list__item-preview"
+              @click="handlePreview(file)"
+          >
+            <el-icon><zoom-in/></el-icon>
+          </span>
+
+          <span
+              v-if="!disabled"
+              class="el-upload-list__item-delete"
+              @click="handleRemove(file)"
+          >
+            <el-icon><Delete/></el-icon>
+          </span>
+        </span>
+            </div>
+          </template>
         </el-upload>
-
-
-        <el-upload
-            class="upload-demo"
-            style="margin: 5px"
-            :accept="imageTypes"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            list-type="picture-card"
-            v-model="form.photo">
-          <i class="el-icon-plus"></i>
-        </el-upload>
-
-
-        <el-upload
-            class="upload-demo"
-            style="margin: 5px"
-            :accept="imageTypes"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            list-type="picture-card"
-            v-model="form.photo">
-          <i class="el-icon-plus"></i>
-        </el-upload>
-
-
       </el-form-item>
 
-
-
+      <el-dialog v-model="dialogVisible">
+        <img w-full :src="dialogImageUrl" alt="Preview Image"/>
+      </el-dialog>
 
       <el-form-item label="인증 키:" required>
-        <el-input v-model="form.verificationKey" placeholder="이메일로 받은 인증 키를 입력하세요"></el-input>
+        <el-input v-model="form.emailApprovalKey" placeholder="이메일로 받은 인증 키를 입력하세요"></el-input>
         <div style="display: flex; margin-top: 10px; justify-content: flex-end;">
           <el-button type="primary" @click="submitForm">이메일 인증</el-button>
         </div>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm">가입하기</el-button>
-        <el-button @click="resetForm">초기화</el-button>
-      </el-form-item>
     </el-form>
+
+    <div class="button-group">
+      <el-button type="primary" @click="onSubmit">가입하기</el-button>
+      <el-button @click="resetForm">초기화</el-button>
+    </div>
+
+    <!--    <div class="button-group">-->
+    <!--      <el-button type="primary" @click="onSubmit2">가입하기2</el-button>-->
+    <!--      <el-button @click="resetForm">초기화</el-button>-->
+    <!--    </div>-->
+    <br/>
+    <div class="button-group">
+      <el-button type="primary" @click="onSubmit3">가입하기3</el-button>
+      <el-button @click="resetForm">초기화</el-button>
+    </div>
+
     <el-dialog :visible.sync="dialogImageUrl">
       <img width="100%" :src="dialogImageUrl" alt="preview">
     </el-dialog>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { ElForm, ElButton, ElInput, ElUpload } from 'element-plus';
+<script lang="ts" setup>
+import {ref, computed, reactive} from 'vue';
+import {ElButton, ElInput, ElNotification, ElUpload, UploadProps, UploadUserFile} from "element-plus";
+import type {UploadFile} from 'element-plus'
+import {Delete, Download, Plus, ZoomIn} from "@element-plus/icons-vue";
+import {JoinInDto} from "@/types/JoinInDto.ts";
+import apiClient, {joinInApi, joinInApi2, uploadImageUrls} from "@/api/login.ts";
 
-interface FormState {
-  email: string;
-  password: string;
-  phone: string;
-  photo: File | null;
-  verificationKey: string;
+
+const form = reactive<JoinInDto>({
+  email: '',
+  password: '',
+  phoneNumber: '',
+  emailApprovalKey: '',
+  files: []
+});
+
+const fileList = ref<UploadUserFile[]>([])
+
+const passwordConfirm = ref('');
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const disabled = ref(false)
+
+
+const handlePreview: UploadProps['onPreview'] = (file) => {
+  console.log(file)
+  dialogImageUrl.value = file.url!
+  dialogVisible.value = true
 }
 
-export default defineComponent({
-  components: {
-    ElForm,
-    ElButton,
-    ElInput,
-    ElUpload
-  },
-  setup() {
-    const form = ref<FormState>({
-      email: '',
-      password: '',
-      phone: '',
-      photo: null,
-      verificationKey: ''
+const handleRemove = (file: UploadFile) => {
+  fileList.value = fileList.value.filter(orgfile => orgfile.name !== file.name);
+}
+
+const passwordError = computed(() => form.password && passwordConfirm.value && form.password !== passwordConfirm.value ? 'Passwords do not match' : '');
+
+const submitForm = () => {
+  if (form.emailApprovalKey.trim() === '') {
+    ElNotification({
+      title: 'Verification required',
+      message: 'Please enter your verification key.',
+      type: 'warning'
     });
-    const dialogImageUrl = ref<string | null>(null);
-    const imageTypes = "image/png, image/jpeg";
-
-    const handlePictureCardPreview = (file: { url: string }) => {
-      dialogImageUrl.value = file.url;
-    };
-
-    const handleRemove = (file: File, fileList: File[]) => {
-      console.log('remove', file, fileList);
-    };
-
-    const submitForm = () => {
-      console.log('submit', form.value);
-      // 폼 제출 로직 추가
-    };
-
-    const resetForm = () => {
-      form.value = { email: '', password: '', phone: '', photo: null, verificationKey: '' };
-    };
-
-    return {
-      form,
-      dialogImageUrl,
-      imageTypes,
-      handlePictureCardPreview,
-      handleRemove,
-      submitForm,
-      resetForm
-    };
+    return;
   }
-});
+  console.log('Verification Key submitted:', form.emailApprovalKey);
+};
+
+const resetForm = () => {
+  form.email = '';
+  form.password = '';
+  passwordConfirm.value = '';
+  form.phoneNumber = '';
+  form.emailApprovalKey = '';
+};
+
+// const onSubmit2 = async () => {
+//
+//   try {
+//     await uploadImageUrls(fileList.value);
+//     ElNotification({
+//       title: 'Success',
+//       message: 'Registration successful',
+//       type: 'success'
+//     });
+//   } catch (error) {
+//     console.error('Error uploading form data:', error);
+//     ElNotification({
+//       title: 'Error',
+//       message: 'Error during form submission',
+//       type: 'error'
+//     });
+//   }
+// }
+const onSubmit3 = async () => {
+  const formData = new FormData();
+  formData.append('email', form.email);
+  formData.append('password', form.password);
+  formData.append('phoneNumber', form.phoneNumber);
+  formData.append('emailApprovalKey', form.emailApprovalKey);
+  fileList.value.forEach(file => {
+    if (file.raw) {
+      formData.append('files', file.raw);
+    }
+  });
+
+  try {
+    const response = await apiClient.post('/auth/joinIn', formData, {headers: {'Content-Type': 'multipart/form-data'}});
+    console.log('Server response:', response.data);
+    ElNotification({
+      title: 'Success',
+      message: 'Files uploaded successfully',
+      type: 'success'
+    });
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    ElNotification({
+      title: 'Error',
+      message: 'Failed to upload files',
+      type: 'error'
+    });
+  }
+}
+
+
+const onSubmit = async () => {
+  if (!form.email || !form.password || !form.phoneNumber) {
+    ElNotification({
+      title: 'Error',
+      message: 'Please fill in all required fields.',
+      type: 'error'
+    });
+    return;
+  }
+
+  // 데이터를 JSON으로 변환하고 Blob으로 포장하여 FormData에 추가
+  const formData = new FormData();
+  formData.append('data', new Blob([JSON.stringify({
+    email: form.email,
+    password: form.password,
+    phoneNumber: form.phoneNumber,
+    emailApprovalKey: form.emailApprovalKey
+  })], {type: 'application/json'}));
+
+  console.log(formData)
+
+
+  try {
+    // API 호출, headers 설정은 생략 (axios가 자동으로 처리)
+    const response = await joinInApi(formData)
+    console.log('Server Response:', response.data);
+    ElNotification({
+      title: 'Success',
+      message: 'Registration successful',
+      type: 'success'
+    });
+  } catch (error) {
+    console.error('Error uploading form data:', error);
+    ElNotification({
+      title: 'Error',
+      message: 'Error during form submission',
+      type: 'error'
+    });
+  }
+}
+
 </script>
+
 
 <style scoped>
 .signup-container {
@@ -140,4 +238,15 @@ export default defineComponent({
   margin: 0 auto;
   padding: 20px;
 }
+
+.button-group {
+  display: flex;
+  justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+}
+
+.el-upload-list__item {
+  transition: none !important;
+}
+
 </style>
+

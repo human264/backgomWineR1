@@ -1,8 +1,10 @@
 import axios from "axios";
-import {LoginResponse, LogInUserDto} from "@/api/dto/LogInUserDto";
+import {LoginResponse, LogInUserDto} from "@/types/LogInUserDto.ts";
+import {useLogInStore} from "@/stores/logInStore.ts";
+import { Router } from 'vue-router';
 
 const apiClient = axios.create({
-    baseURL: "http://localhost:8081/api",
+    baseURL: "http://localhost:8080/api",
     headers: {
         'Content-Type': 'application/json',
     },
@@ -42,6 +44,7 @@ apiClient.interceptors.response.use(
                 console.error('Refresh token error:', refreshError);
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+
                 return Promise.reject(refreshError);
             }
         }
@@ -60,6 +63,7 @@ export const logInApi = async (logInUserData: LogInUserDto): Promise<LoginRespon
         return response.data;
     } catch (error: any) {
         console.error('Login error:', error.response?.data || error.message);
+
         throw error;
     }
 }
@@ -75,8 +79,6 @@ export const fetchUserImage = async (): Promise<string> => {
     }
 }
 
-
-
 function blobToDataUrl(blob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -86,44 +88,57 @@ function blobToDataUrl(blob: Blob): Promise<string> {
     });
 }
 
+export const joinInApi = async (formData: FormData): Promise<any> => {
+    try {
+        const response = await apiClient.post('/auth/joinInWithOutPhoto', formData);
+        console.log('Server Response:', response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error('Login error:', error.response?.data || error.message);
 
+        throw error;
+    }
+}
 
-// import axios from "axios";
-// import {LoginResponse, LogInUserDto} from "@/api/dto/LogInUserDto";
-//
-// const apiClient = axios.create({
-//     baseURL: "http://192.168.0.10:8080/api",
-//
-//     headers: {
-//         'Content-Type': 'application/json',
-//     },
-//     timeout: 10000,
-// })
-//
-// apiClient.interceptors.request.use(
-//     config => {
-//         const token = localStorage.getItem('accessToken');
-//         if (token) {
-//             config.headers['Authorization'] = `Bearer ${token}`;
-//         }
-//         return config;
-//     },
-//     error => {
-//         return Promise.reject(error);
-//     }
-// );
-//
-//
-// export const logInApi = async (logInUserData: LogInUserDto): Promise<LoginResponse> => {
-//     try {
-//         const response = await apiClient.post<LoginResponse>('/auth/signin', logInUserData);
-//         const { tokenDto } = response.data;
-//
-//         localStorage.setItem('accessToken', tokenDto.accessToken);
-//         localStorage.setItem('refreshToken', tokenDto.refreshToken);
-//         return response.data;
-//     } catch (error: any) {
-//         console.error('Login error:', error.response?.data || error.message);
-//         throw error;
-//     }
-// }
+export const joinInApi2 = async (formData: FormData): Promise<any> => {
+    try {
+        const response = await apiClient.post('/auth/joinIn', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        console.log('Server Response:', response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error('JoinIn error:', error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const uploadImageUrls = async (formData: FormData) => {
+    try {
+        const response = await apiClient.post('/auth/uploadImageUrls', formData,{
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        console.log('Server response:', response.data);
+    } catch (error) {
+        console.error('Error uploading files:', error);
+    }
+};
+
+export function logout(router: Router) {
+    // 로컬 스토리지에서 토큰 제거
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
+    // Axios 기본 헤더에서 Authorization 제거
+    axios.defaults.headers.common['Authorization'] = undefined;
+
+    const store = useLogInStore();
+    store.updateLogOutState()
+    router.push({ name: 'LogIn' }); // 직접 라우터 인스턴스 사용
+}
+
+export default apiClient;

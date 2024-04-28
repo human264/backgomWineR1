@@ -38,17 +38,19 @@
     <p>Email: </p>
     <p>ID: </p>
     <!-- 추가 정보 필요 시 여기에 표시 -->
+    <el-button @click="logout">Logout</el-button>
   </div>
 
 </template>
 
 <script lang="ts">
 import {computed, defineComponent, ref,} from 'vue';
-import { ElForm, ElInput, ElButton, ElNotification } from 'element-plus';
-import router from "@/router";
-import {fetchUserImage, logInApi} from "@/api/login.ts";
-import {LogInUserDto} from "@/api/dto/LogInUserDto";
+import {ElForm, ElInput, ElButton, ElNotification} from 'element-plus';
+import {fetchUserImage, logInApi, logout as logoutFunc} from "@/api/login.ts";
+import {LogInUserDto} from "@/types/LogInUserDto.ts";
 import {useLogInStore} from '@/stores/logInStore';
+import {useRouter} from "vue-router";
+
 
 export default defineComponent({
   components: {
@@ -72,7 +74,7 @@ export default defineComponent({
       try {
         const res = await logInApi(logInUserDto);
         store.updateLogInState(res.tokenDto.accessToken, res.tokenDto.refreshToken);
-        store.setUserData({ email: email.value, id: res.id });
+        store.setUserData({email: email.value, id: res.id});
 
         ElNotification({
           title: 'Success',
@@ -113,6 +115,13 @@ export default defineComponent({
       console.log('Navigating to forgot password page');
       router.push({name: 'PasswordRecovery'});
     };
+    const router = useRouter();
+
+    const logout = () => {
+      logoutFunc(router);
+      router.push({name: 'LogIn'});
+      location.reload();
+    }
 
     return {
       isLogined,
@@ -121,6 +130,7 @@ export default defineComponent({
       handleLogin,
       handleSignUp,
       handleForgotPassword,
+      logout
     };
   },
 });
