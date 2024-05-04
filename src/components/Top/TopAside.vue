@@ -26,10 +26,8 @@
             <el-menu-item-group>
               <el-menu-item index="2-1" @click="centerDialogVisibleFun">모임 가입</el-menu-item>
               <el-menu-item index="2-2" @click="navigateToWineCommunity">내 모임</el-menu-item>
-              <el-menu-item index="2-3">모임 만들기</el-menu-item>
-              <el-menu-item index="2-4">정모 일정</el-menu-item>
-              <el-menu-item index="2-5">친구 초대</el-menu-item>
-              <el-menu-item index="2-6">신규 모임</el-menu-item>
+              <el-menu-item index="2-3" @click="makeTheClub">모임 만들기</el-menu-item>
+              <el-menu-item index="2-4" >정모 일정</el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
 
@@ -140,37 +138,73 @@
     </el-aside>
   </div>
 
-
   <el-dialog
       v-model="centerDialogVisible"
-      title="Notice"
+      title="모임 생성"
       width="500"
       destroy-on-close
       center
   >
-    <span>
-      Notice: before dialog gets opened for the first time this node and the one
-      bellow will not be rendered
-    </span>
-    <div>
-      <strong>Extra content (Not rendered)</strong>
-    </div>
+    <el-form :model="form" label-width="auto" style="max-width: 600px">
+      <el-form-item label="와인 모임 이름">
+        <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="모임 지역">
+        <el-select v-model="form.region" placeholder="please select your zone">
+          <el-option label="Zone one" value="shanghai" />
+          <el-option label="Zone two" value="beijing" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="연령대">
+        <el-col :span="11">
+          <el-input v-model="form.name" style="padding-right: 20px" />
+        </el-col>
+        <el-col :span="2" class="text-center">
+          <span class="text-gray-500">-</span>
+        </el-col>
+        <el-col :span="11">
+          <el-input v-model="form.name" />
+        </el-col>
+      </el-form-item>
+      <el-form-item label="Instant delivery">
+        <el-switch v-model="form.delivery" />
+      </el-form-item>
+      <el-form-item label="Activity type">
+        <el-checkbox-group v-model="form.type">
+          <el-checkbox value="Online activities" name="type">
+            Online activities
+          </el-checkbox>
+          <el-checkbox value="Promotion activities" name="type">
+            Promotion activities
+          </el-checkbox>
+          <el-checkbox value="Offline activities" name="type">
+            Offline activities
+          </el-checkbox>
+          <el-checkbox value="Simple brand exposure" name="type">
+            Simple brand exposure
+          </el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="Resources">
+        <el-radio-group v-model="form.resource">
+          <el-radio value="Sponsor">Sponsor</el-radio>
+          <el-radio value="Venue">Venue</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="Activity form">
+        <el-input v-model="form.desc" type="textarea" />
+      </el-form-item>
+    </el-form>
+
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="centerDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="centerDialogVisible = false">
           Confirm
         </el-button>
+        <el-button @click="centerDialogVisible = false">Cancel</el-button>
       </div>
     </template>
   </el-dialog>
-
-
-
-
-
-
-
 
 </template>
 
@@ -178,7 +212,7 @@
 
 import { useRouter } from 'vue-router';
 import {Message, Setting} from "@element-plus/icons-vue";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import apiClient from "@/api/login.ts";
 import { useLogInStore } from '@/stores/logInStore.ts';
 
@@ -188,22 +222,43 @@ import { useLogInStore } from '@/stores/logInStore.ts';
 
   const centerDialogVisible = ref(false);
 
-  const centerDialogVisibleFun = () => {
-    if(logInStore.isLogIn == true) {
-      console.log("로그???")
-      centerDialogVisible.value = true;
-    }
+const makeTheClub = () => {
+  if (logInStore.isLogIn == true) {
+    centerDialogVisible.value = true;
   }
+}
 
-  const navigateToWineCommunity = () => {
-    router.push({ name: 'WineCommunity' });
-  };
+
+const centerDialogVisibleFun = () => {
+
+  router.push({name: 'WineCommunityToJoin'});
+
+}
+
+const navigateToWineCommunity = () => {
+  router.push({name: 'WineCommunity'});
+};
 
 const navigateToFeedAll = () => {
-  router.push({ name: 'FeedLayout' });
+  router.push({name: 'FeedLayout'});
 };
 
 
+// do not use same name with ref
+const form = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+})
+
+const onSubmit = () => {
+  console.log('submit!')
+}
 
 
 </script>

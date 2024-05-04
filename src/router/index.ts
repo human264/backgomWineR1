@@ -14,6 +14,7 @@ import SignIn from "@/components/LogIn/SignIn.vue";
 import PasswordRecovery from "@/components/LogIn/PasswordRecovery.vue";
 import {useLogInStore} from "@/stores/logInStore.ts";
 import CommunityPicture from "@/components/WineCommunity/picture/CommunityPicture.vue";
+import JoinInMeetingFindLayout from "@/views/subViews/JoinInMeetingFindLayout.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -45,6 +46,14 @@ const routes: Array<RouteRecordRaw> = [
         component: FeedLayout,
         meta: { requiresAuth: true },
     },
+
+    {
+        path: '/WineCommunityToJoin',
+        name: 'WineCommunityToJoin',
+        component: JoinInMeetingFindLayout,
+        meta: { requiresAuth: true }
+    },
+
     {
         path: '/WineCommunity',
         name: 'WineCommunity',

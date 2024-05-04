@@ -20,6 +20,7 @@
       <el-form-item label="사진 업로드:">
         <el-upload
             v-model:file-list="fileList"
+            accept="image/*"
             list-type="picture-card" :auto-upload="false">
           <el-icon>
             <Plus/>
@@ -61,18 +62,10 @@
       </el-form-item>
     </el-form>
 
-    <div class="button-group">
-      <el-button type="primary" @click="onSubmit">가입하기</el-button>
-      <el-button @click="resetForm">초기화</el-button>
-    </div>
 
-    <!--    <div class="button-group">-->
-    <!--      <el-button type="primary" @click="onSubmit2">가입하기2</el-button>-->
-    <!--      <el-button @click="resetForm">초기화</el-button>-->
-    <!--    </div>-->
     <br/>
     <div class="button-group">
-      <el-button type="primary" @click="onSubmit3">가입하기3</el-button>
+      <el-button type="primary" @click="onSubmit">가입하기3</el-button>
       <el-button @click="resetForm">초기화</el-button>
     </div>
 
@@ -86,9 +79,9 @@
 import {ref, computed, reactive} from 'vue';
 import {ElButton, ElInput, ElNotification, ElUpload, UploadProps, UploadUserFile} from "element-plus";
 import type {UploadFile} from 'element-plus'
-import {Delete, Download, Plus, ZoomIn} from "@element-plus/icons-vue";
+import {Delete, Plus, ZoomIn} from "@element-plus/icons-vue";
 import {JoinInDto} from "@/types/JoinInDto.ts";
-import apiClient, {joinInApi, joinInApi2, uploadImageUrls} from "@/api/login.ts";
+import apiClient, {joinInApi} from "@/api/login.ts";
 
 
 const form = reactive<JoinInDto>({
@@ -139,30 +132,14 @@ const resetForm = () => {
   form.emailApprovalKey = '';
 };
 
-// const onSubmit2 = async () => {
-//
-//   try {
-//     await uploadImageUrls(fileList.value);
-//     ElNotification({
-//       title: 'Success',
-//       message: 'Registration successful',
-//       type: 'success'
-//     });
-//   } catch (error) {
-//     console.error('Error uploading form data:', error);
-//     ElNotification({
-//       title: 'Error',
-//       message: 'Error during form submission',
-//       type: 'error'
-//     });
-//   }
-// }
-const onSubmit3 = async () => {
+
+const onSubmit = async () => {
   const formData = new FormData();
   formData.append('email', form.email);
   formData.append('password', form.password);
   formData.append('phoneNumber', form.phoneNumber);
   formData.append('emailApprovalKey', form.emailApprovalKey);
+
   fileList.value.forEach(file => {
     if (file.raw) {
       formData.append('files', file.raw);
@@ -174,60 +151,19 @@ const onSubmit3 = async () => {
     console.log('Server response:', response.data);
     ElNotification({
       title: 'Success',
-      message: 'Files uploaded successfully',
+      message: '회원 가입 되었습니다.',
       type: 'success'
     });
   } catch (error) {
     console.error('Error uploading files:', error);
     ElNotification({
       title: 'Error',
-      message: 'Failed to upload files',
+      message: '회원 가입에 실패하였습니다.',
       type: 'error'
     });
   }
 }
 
-
-const onSubmit = async () => {
-  if (!form.email || !form.password || !form.phoneNumber) {
-    ElNotification({
-      title: 'Error',
-      message: 'Please fill in all required fields.',
-      type: 'error'
-    });
-    return;
-  }
-
-  // 데이터를 JSON으로 변환하고 Blob으로 포장하여 FormData에 추가
-  const formData = new FormData();
-  formData.append('data', new Blob([JSON.stringify({
-    email: form.email,
-    password: form.password,
-    phoneNumber: form.phoneNumber,
-    emailApprovalKey: form.emailApprovalKey
-  })], {type: 'application/json'}));
-
-  console.log(formData)
-
-
-  try {
-    // API 호출, headers 설정은 생략 (axios가 자동으로 처리)
-    const response = await joinInApi(formData)
-    console.log('Server Response:', response.data);
-    ElNotification({
-      title: 'Success',
-      message: 'Registration successful',
-      type: 'success'
-    });
-  } catch (error) {
-    console.error('Error uploading form data:', error);
-    ElNotification({
-      title: 'Error',
-      message: 'Error during form submission',
-      type: 'error'
-    });
-  }
-}
 
 </script>
 

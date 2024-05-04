@@ -58,12 +58,6 @@ export default defineComponent({
 
     return {
       form,
-      dialogImageUrl,
-      imageTypes,
-      handlePictureCardPreview,
-      handleRemove,
-      submitForm,
-      resetForm
     };
   }
 });

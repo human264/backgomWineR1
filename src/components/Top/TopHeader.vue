@@ -27,29 +27,24 @@
   </el-menu>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import WineProfile from "@/components/Top/WineProfile.vue";
 
-export default defineComponent({
-  components: { WineProfile },
-  setup() {
-    const router = useRouter();
-    const activeIndex = ref('1');
 
-    const toLogIn = () => {
-      router.push({ name: 'LogIn' });
-    };
 
-    const handleSelect = (key: string, keyPath: string[]) => {
-      console.log(key, keyPath);
-    };
+const router = useRouter();
+const activeIndex = ref('1');
 
-    // 모든 정의한 변수와 함수를 반환합니다.
-    return { activeIndex, toLogIn, handleSelect };
-  },
-});
+const toLogIn = () => {
+  router.push({ name: 'LogIn' });
+};
+
+const handleSelect = (key: string, keyPath: string[]) => {
+  console.log(key, keyPath);
+};
+
 </script>
 <style>
 .flex-grow {

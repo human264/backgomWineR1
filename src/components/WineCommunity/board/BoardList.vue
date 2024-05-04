@@ -1,7 +1,8 @@
 <template>
   <div>
     <div style="display: flex; justify-content: flex-end; margin: 10px;">
-      <el-button type="primary">Primary</el-button>
+      <el-button type="primary">게시글 작성
+      </el-button>
     </div>
     <el-card v-for="post in posts" :key="post.id" class="post-item">
       <div class="post-header">
@@ -41,7 +42,7 @@ export default defineComponent({
       {
         id: 1,
         title: 'Post 1',
-        content: 'This is the content of post 1.',
+        content: 'This is the content of post 1.1',
         date: new Date(),
         views: 123,
         comments: [
