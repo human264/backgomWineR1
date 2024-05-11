@@ -104,9 +104,9 @@ export const meetingJoinIn = async (meetingUuid: string): Promise<any> => {
 }
 
 
-export const getTheWineAfterMeetingList = async (): Promise<any> => {
+export const getTheWineAfterMeetingList = async (): Promise<{ value: string, label: string }[]> => {
     try {
-        const response = await apiClient.get(`/WineCommunity/review/wineReview` );
+        const response = await apiClient.get(`/WineCommunity/review/wineJoinedMeetingList` );
         return response.data;
     } catch (error) {
         console.error('자료를 불러오는데 실패 하였습니다.', error);  // 에러 메시지 수정
@@ -114,3 +114,58 @@ export const getTheWineAfterMeetingList = async (): Promise<any> => {
     }
 }
 
+export const getTheWineAfterTastyNoteWineName = async (meetingUuid: string): Promise<any> => {
+    try {
+        const response = await apiClient.get(`/WineCommunity/review/wineJoinedMeetingList/${meetingUuid}` );
+        return response.data;
+    } catch (error) {
+        console.error('자료를 불러오는데 실패 하였습니다.', error);  // 에러 메시지 수정
+        throw error;
+    }
+}
+
+export const getTheWineAfterList = async (clubName: string): Promise<any> => {
+    try {
+        const response = await apiClient.get(`/WineCommunity/review/wineAfterTalk/${clubName}` );
+        return response.data;
+    } catch (error) {
+        console.error('자료를 불러오는데 실패 하였습니다.', error);  // 에러 메시지 수정
+        throw error;
+    }
+}
+
+export const fetchWineAfterImages = async (clubUUid: string, uuid: string): Promise<any> => {
+    try {
+        const response = await apiClient.get<Blob>(`/WineCommunity/review/wineAfterTalkImages/${clubUUid}/${uuid}`, { responseType: 'blob' });
+        return response;
+    } catch (error: any) {
+        console.error('이미지 가져오기 오류:', error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const submitTheWineAfter = async (formData: FormData): Promise<any> => {
+    try {
+        const response = await apiClient.post(`/WineCommunity/review/wineAfterTalk`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            },
+
+        });
+        return response;
+    } catch (error: any) {
+        console.error('전달 오류:', error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Blob을 데이터 URL로 변환하는 데 실패했습니다.'));
+        reader.readAsDataURL(blob);
+    });
+}

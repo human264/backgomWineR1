@@ -1,9 +1,11 @@
 <template>
   <div>
     <el-dialog
-        v-model="props.dialogFormVisible"
-        title="모임 후기 작성" width="800"
-        @close="$emit('wineAfterTalkDialogClose')"
+        :visible="dialogFormVisible"
+        title="모임 후기 작성"
+        width="800"
+        @close="handleClose"
+        center
     >
       <div style="width: 100%; height: 480px">
         <el-tabs type="border-card" class="demo-tabs">
@@ -38,7 +40,7 @@
                 </el-form-item>
 
                 <el-form-item label="별점" :label-width="formLabelWidth">
-                  <el-rate v-model="afterTalkForm.totalPoint" clearable/>
+                  <el-rate v-model="afterTalkForm.totalPoint" clearable />
                 </el-form-item>
 
                 <el-form-item label="사진 업로드" :label-width="formLabelWidth">
@@ -50,18 +52,18 @@
                       :disabled="disabledPictureUpload"
                   >
                     <el-icon>
-                      <Plus/>
+                      <Plus />
                     </el-icon>
 
                     <template #file="{ file }">
                       <div>
-                        <img class="el-upload-list__item-thumbnail" :src="file.url" alt=""/>
+                        <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
                         <span class="el-upload-list__item-actions">
                           <span class="el-upload-list__item-preview" @click="handlePreview(file)">
-                            <el-icon><ZoomIn/></el-icon>
+                            <el-icon><ZoomIn /></el-icon>
                           </span>
                           <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                            <el-icon><Delete/></el-icon>
+                            <el-icon><Delete /></el-icon>
                           </span>
                         </span>
                       </div>
@@ -210,11 +212,11 @@
 
                 <el-form-item label="와인 색" :label-width="formLabelWidth">
                   <el-select v-model="afterTalkForm.wineColor" placeholder="와인 색 선택 바랍니다." style="width: 250px">
-                    <el-option label="스파클링 와인" value="스파클링 와인"/>
-                    <el-option label="화이트 와인" value="화이트 와인"/>
-                    <el-option label="레드 와인" value="레드 와인"/>
-                    <el-option label="로제 와인" value="로제 와인"/>
-                    <el-option label="디저트 와인" value="디저트 와인"/>
+                    <el-option label="스파클링 와인" value="스파클링 와인" />
+                    <el-option label="화이트 와인" value="화이트 와인" />
+                    <el-option label="레드 와인" value="레드 와인" />
+                    <el-option label="로제 와인" value="로제 와인" />
+                    <el-option label="디저트 와인" value="디저트 와인" />
                   </el-select>
                 </el-form-item>
               </el-scrollbar>
@@ -298,7 +300,7 @@
           <el-button type="primary" :icon="Edit" @click="onSubmit">
             작성
           </el-button>
-          <el-button @click="$emit('wineAfterTalkDialogClose')">취소</el-button>
+          <el-button @click="$emit('emitCancel')">취소</el-button>
         </div>
       </template>
     </el-dialog>
@@ -306,22 +308,30 @@
 </template>
 
 <script setup lang="ts">
-
-import {onMounted, reactive, ref, watch} from 'vue'
-import {Delete, Edit, Plus, ZoomIn} from "@element-plus/icons-vue";
-import {ElNotification, ElUpload, UploadFile, UploadProps, UploadUserFile} from "element-plus";
+import { Delete, Edit, Plus, ZoomIn } from "@element-plus/icons-vue";
+import { ElNotification, ElUpload, UploadFile, UploadProps, UploadUserFile } from "element-plus";
+import { onMounted, reactive, ref, watch } from "vue";
 import apiClient from "@/api/login.ts";
-import {getTheWineAfterMeetingList, getTheWineAfterTastyNoteWineName, submitTheWineAfter} from "@/api/wineMeeting.ts";
+import { getTheWineAfterMeetingList, getTheWineAfterTastyNoteWineName } from "@/api/wineMeeting.ts";
 
-interface WineMeeting {
-  value: string;
-  label: string;
-}
+const props = defineProps(['dialogFormVisible']);
+const emits = defineEmits(['emitCancel', 'update:dialogFormVisible']);
+const disabled = ref(false);
+const disabledPictureUpload = ref(false);
+const fileList = ref<UploadUserFile[]>([]);
 
-const props = defineProps(['dialogFormVisible'])
-const emits = defineEmits(['wineAfterTalkDialogClose', 'update:dialogFormVisible']);
+const shortcuts = [
+  { text: 'Today', value: new Date() },
+  { text: 'Yesterday', value: () => new Date(Date.now() - 3600 * 1000 * 24) },
+  { text: 'A week ago', value: () => new Date(Date.now() - 3600 * 1000 * 24 * 7) }
+];
 
-const formLabelWidth = '150px';
+const handleRemove = (file: UploadFile) => {
+  fileList.value = fileList.value.filter(orgfile => orgfile.uid !== file.uid);
+};
+
+const disabledDate = (time: Date) => time.getTime() > Date.now();
+
 const afterTalkForm = reactive({
   meeting: [],
   afterTalk: '',
@@ -350,23 +360,6 @@ const afterTalkForm = reactive({
   detailNote: ''
 });
 
-
-const disabled = ref(false);
-const disabledPictureUpload = ref(false);
-const fileList = ref<UploadUserFile[]>([]);
-
-const shortcuts = [
-  {text: 'Today', value: new Date()},
-  {text: 'Yesterday', value: () => new Date(Date.now() - 3600 * 1000 * 24)},
-  {text: 'A week ago', value: () => new Date(Date.now() - 3600 * 1000 * 24 * 7)}
-];
-
-const handleRemove = (file: UploadFile) => {
-  fileList.value = fileList.value.filter(orgfile => orgfile.uid !== file.uid);
-};
-
-const disabledDate = (time: Date) => time.getTime() > Date.now();
-
 const handlePreview: UploadProps['onPreview'] = (file) => {
   dialogImageUrl.value = file.url!;
   dialogVisible.value = true;
@@ -380,24 +373,10 @@ watch(
     }
 );
 
-watch(props, async () => {
-      if (props.dialogFormVisible === true) {
-        console.log("Dialog 켜짐")
-        try {
-          const result: { value: string, label: string }[] = await getTheWineAfterMeetingList();
-
-          console.log(result)
-
-          joinedWineMeetingList.value = result;
-        } catch (error) {
-          console.error('Failed to load wine meeting list:', error);
-        }
-      }
-    }
-)
-
-
-
+interface WineMeeting {
+  value: string;
+  label: string;
+}
 
 const joinedWineMeetingListValue = ref('');
 const joinedWineMeetingList = ref<WineMeeting[]>([]);
@@ -407,7 +386,7 @@ const joinedWineList = ref<WineMeeting[]>([]);
 const size = ref<'default' | 'large' | 'small'>('default');
 const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
-
+const formLabelWidth = '150px';
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
@@ -416,12 +395,12 @@ const onSubmit = async () => {
   formData.append('meeting', joinedWineMeetingListValue.value);
   formData.append('afterTalk', afterTalkForm.afterTalk);
   formData.append('totalPoint', afterTalkForm.totalPoint.toString());
-  formData.append('wineNames', joinedWineListValue.value);  // 필드 이름 수정
+  formData.append('wineName', joinedWineListValue.value);
   formData.append('wineRegion', afterTalkForm.wineRegion);
   formData.append('wineFactory', afterTalkForm.wineFactory);
   formData.append('wineVintage', afterTalkForm.wineVintage);
   formData.append('wineVariety', afterTalkForm.wineVariety);
-  formData.append('meetingDate', afterTalkForm.inputDate ? formatDate(afterTalkForm.inputDate) : '');  // 필드 이름 수정
+  formData.append('inputDate', afterTalkForm.inputDate ? formatDate(afterTalkForm.inputDate) : '');
   formData.append('sweetness', afterTalkForm.sweetness.toString());
   formData.append('acidity', afterTalkForm.acidity.toString());
   formData.append('body', afterTalkForm.body.toString());
@@ -445,7 +424,9 @@ const onSubmit = async () => {
   });
 
   try {
-    const response = await submitTheWineAfter(formData);
+    const response = await apiClient.post('/WineCommunity/review/wineAfterTalk', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
     console.log('Server response:', response.data);
     ElNotification({
       title: 'Success',
@@ -462,6 +443,22 @@ const onSubmit = async () => {
     });
   }
 };
+
+const handleClose = () => {
+  emits('update:dialogFormVisible', false);
+};
+
+onMounted(async () => {
+  try {
+    const result = await getTheWineAfterMeetingList();
+    if (result && Array.isArray(result)) {
+      joinedWineMeetingList.value = result;
+      console.log('Loaded wine meeting list:', joinedWineMeetingList.value); // 데이터 확인을 위한 로그 출력
+    }
+  } catch (error) {
+    console.error('Failed to load wine meeting list:', error);
+  }
+});
 
 watch(joinedWineMeetingListValue, async (newVal, oldVal) => {
   if (newVal !== oldVal) {

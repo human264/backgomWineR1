@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog
-        v-model="props.dialogVisible"
+        v-model="props.dialogWineVisible"
         title="와인 정보 입력"
         width="500"
         destroy-on-close
         draggable
         center
-        @close="$emit('emitCancel')"
+        @close="$emit('wineInfoEmit')"
     >
       <el-form :model="form" label-width="auto" style="max-width: 600px">
 
@@ -101,7 +101,7 @@
           <el-button type="primary" @click="onSubmitToApi">
             입력
           </el-button>
-          <el-button @click="$emit('emitCancel')">취소</el-button>
+          <el-button @click="$emit('wineInfoEmit')">취소</el-button>
         </div>
       </template>
     </el-dialog>
@@ -120,6 +120,8 @@ import {
 } from "@/api/wineMeeting.ts";
 import {ClubMeetingCreate, WineInfo} from "@/types/ClubInfo.ts";
 import {useLogInStore} from "@/stores/logInStore.ts";
+
+const emits = defineEmits(['wineInfoEmit'])
 
 const form = ref<WineInfo>({
   name: "",
@@ -144,13 +146,13 @@ const onSubmitToApi = async () => {
 const logInStore = useLogInStore();
 
 const props = defineProps({
-  dialogVisible: Boolean,
+  dialogWineVisible: Boolean,
 })
 
 
-watch(dialogFormVisible, async (newVal, oldVal) => {
-  if (dialogFormVisible.value == true) {
-    joinedWineList.value = await getTheWineAfterMeetingList()
+watch(props, async (newVal, oldVal) => {
+  if (props.dialogWineVisible == true) {
+    form.value = await getTheWineAfterMeetingList()
   }
 })
 

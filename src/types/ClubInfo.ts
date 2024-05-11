@@ -1,3 +1,5 @@
+import {ListItem} from "element-plus";
+
 export interface ClubInfo {
     id: number;
     clubSubject: string;
@@ -14,7 +16,7 @@ export interface ClubMeetingCreate {
     uuid?: string;
     subject?: string;
     detail?: string;
-    wineName?: [string?];
+    wineName?: string[];
     meetingDate?: Date
     meetingTime?: [Date, Date]
     location?: string
@@ -69,5 +71,17 @@ export interface MeetingJoinInDto {
     meetingUUid : String;
 }
 
-
+export interface AfterTalkListDto {
+    uuid: ""
+    afterSubject: "";
+    afterTalk: "";
+    meetingPoint: 0.0;
+    totalWinePoint: 0.0;
+    location: "";
+    meetingUuid: "";
+    email: "";
+    createDate: null;
+    url: string;
+    srcList: string[];
+}
 

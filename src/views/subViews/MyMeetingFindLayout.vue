@@ -37,7 +37,7 @@ onMounted(async () => {
 });
 
 // 이미지 클릭 이벤트 핸들러
-const onClickImage = (url) => {
+const onClickImage = (url: string) => {
   logInStore.setTempUrl(url)
   router.push(`/WineCommunity/${url}`);
 }

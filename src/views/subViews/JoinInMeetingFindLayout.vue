@@ -31,11 +31,9 @@ const value = ref(5);
 
 const joinInTheClub = async (id: string) => {
   await joinInTheClubApi(id)
+  fetchMyJoinedClub.value = await findClubsToJoin();
 }
 
-onUpdated(async () => {
-  fetchMyJoinedClub.value = await findClubsToJoin();
-})
 
 onMounted(async () => {
   fetchMyJoinedClub.value = await findClubsToJoin();

@@ -4,7 +4,7 @@ import {useLogInStore} from "@/stores/logInStore.ts";
 import { Router } from 'vue-router';
 
 const apiClient = axios.create({
-    baseURL: "http://localhost:8080/api",
+    baseURL: `${import.meta.env.VITE_APP_API_URL}/api`,
     headers: {
         'Content-Type': 'application/json',
     },

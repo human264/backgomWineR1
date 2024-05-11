@@ -21,7 +21,7 @@
 
         <el-form-item label="Wine" style="margin-left: 50px">
           <el-select
-              v-model="clubCreateMeeting.wineName"
+              v-model="value"
               multiple
               filterable
               remote
@@ -33,7 +33,7 @@
 
           >
             <el-option
-                v-for="item in options"
+                v-for="item in list"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -102,7 +102,7 @@ import {ClubMeetingCreate} from "@/types/ClubInfo.ts";
 import {useLogInStore} from "@/stores/logInStore.ts";
 
 const logInStore = useLogInStore();
-const emits = defineEmits(['closeDialog']);
+const emits = defineEmits(['emitCancel']);
 
 const props = defineProps({
   dialogVisible: Boolean,
@@ -162,8 +162,9 @@ const remoteMethod = (query: string) => {
 
 const emitSubmit = async () => {
   try {
+    clubCreateMeeting.value.wineName = value.value
     await makeTheNewMeeting(clubCreateMeeting.value);
-    emits('closeDialog');  // 다이얼로그 닫기 이벤트를 부모에게 전달
+    emits('emitCancel');  // 다이얼로그 닫기 이벤트를 부모에게 전달
   } catch (error) {
     console.error("Error creating meeting:", error);
     // 에러 처리 로직, 예를 들어 사용자에게 에러 메시지를 보여줄 수 있습니다.
@@ -207,6 +208,8 @@ watch(clubCreateMeeting.value, async (newValue, oldValue) => {
   }, 3000);
 
 }, { immediate: true }); // 첫 호출은 즉시 실행되도록 설정
+
+
 
 async function loadWineNames() {
   try {
