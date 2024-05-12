@@ -398,7 +398,7 @@ const onSubmit = async () => {
   formData.append('wineName', joinedWineListValue.value);
   formData.append('wineRegion', afterTalkForm.wineRegion);
   formData.append('wineFactory', afterTalkForm.wineFactory);
-  formData.append('wineVintage', afterTalkForm.wineVintage);
+  formData.append('wineVintage', afterTalkForm.wineVintage? formatDate(afterTalkForm.wineVintage) : '');
   formData.append('wineVariety', afterTalkForm.wineVariety);
   formData.append('inputDate', afterTalkForm.inputDate ? formatDate(afterTalkForm.inputDate) : '');
   formData.append('sweetness', afterTalkForm.sweetness.toString());

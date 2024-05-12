@@ -114,13 +114,7 @@ const disabledPictureUpload = ref(false);
 
 
 const joinedWineList = ref<JoinedMeetingList[]>([]);
-const joinedWineListClick = async () => {
 
-
-  joinedWineList.value = await getTheWineAfterMeetingList()
-
-
-}
 
 const handleRemove = (file: UploadFile) => {
   fileList.value = fileList.value.filter(orgfile => orgfile.name !== file.name);

@@ -387,8 +387,8 @@ watch(props, async () => {
           const result: { value: string, label: string }[] = await getTheWineAfterMeetingList();
 
           console.log(result)
-
-          joinedWineMeetingList.value = result;
+          const filteredResult = result.filter(item => item !== null);
+          joinedWineMeetingList.value = filteredResult;
         } catch (error) {
           console.error('Failed to load wine meeting list:', error);
         }
@@ -411,6 +411,14 @@ const dialogVisible = ref(false);
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
+function formatDateToYMD(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줍니다.
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+
 const onSubmit = async () => {
   const formData = new FormData();
   formData.append('meeting', joinedWineMeetingListValue.value);
@@ -419,7 +427,7 @@ const onSubmit = async () => {
   formData.append('wineNames', joinedWineListValue.value);  // 필드 이름 수정
   formData.append('wineRegion', afterTalkForm.wineRegion);
   formData.append('wineFactory', afterTalkForm.wineFactory);
-  formData.append('wineVintage', afterTalkForm.wineVintage);
+  formData.append('wineVintage', formatDateToYMD(new Date(afterTalkForm.wineVintage)));
   formData.append('wineVariety', afterTalkForm.wineVariety);
   formData.append('meetingDate', afterTalkForm.inputDate ? formatDate(afterTalkForm.inputDate) : '');  // 필드 이름 수정
   formData.append('sweetness', afterTalkForm.sweetness.toString());
@@ -452,7 +460,7 @@ const onSubmit = async () => {
       message: '와인 평가가 등록되었습니다.',
       type: 'success'
     });
-    emits('update:dialogFormVisible', false); // 다이얼로그 닫기
+    emits("update:dialogFormVisible")
   } catch (error) {
     console.error('Error uploading data:', error);
     ElNotification({

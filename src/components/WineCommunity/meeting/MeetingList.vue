@@ -36,7 +36,7 @@
       </div>
 
       <div class="comments-section">
-        <h4>참가 인원 : {{ post.joinCount }} / {{ post.jointedCost }}
+        <h4>참가 인원 : {{ post.joinCount }} / {{ post.totalJoinCount }}
 
           <el-button v-if="post.isCanJoin" type="primary" style="margin-left: 10px"
                      @click="joinInApi(post.uuid)">참석

@@ -3,8 +3,13 @@ import {LoginResponse, LogInUserDto} from "@/types/LogInUserDto.ts";
 import {useLogInStore} from "@/stores/logInStore.ts";
 import { Router } from 'vue-router';
 
+
 const apiClient = axios.create({
+    // baseURL: "http://backgom.iptime.org:48088/api",
+    // baseURL: `${process.env.VITE_APP_API_URL}/api`,
     baseURL: `${import.meta.env.VITE_APP_API_URL}/api`,
+    // baseURL: `/api`,
+
     headers: {
         'Content-Type': 'application/json',
     },

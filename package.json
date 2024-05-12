@@ -4,9 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-
     "dev": "NODE_ENV=development vite",
-    "build": "NODE_ENV=production vite build",
+    "build": "NODE_ENV=production vite build --mode .env.production",
     "dev:remote": "NODE_ENV=remote vite"
   },
   "dependencies": {
